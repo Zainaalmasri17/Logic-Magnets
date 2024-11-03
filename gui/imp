@@ -1,0 +1,29 @@
+import pygame
+import time
+import random 
+
+WIDTH, HEIGHT = 600, 400
+WIN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Logic Magnets")
+
+# Load and scale the background image
+BG = pygame.transform.scale(pygame.image.load("360_F_296153501_B34baBHDkFXbl5RmzxpiOumF4LHGCvAE.jpg"), (WIDTH, HEIGHT))
+
+def draw():
+    WIN.blit(BG, (0, 0)) 
+    pygame.display.update()  
+
+def main():
+    run = True
+
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+        draw()  
+
+    pygame.quit()  
+if __name__ == "__main__":  
+    pygame.init()  
+    main() 

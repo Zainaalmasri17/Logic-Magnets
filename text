@@ -1,0 +1,377 @@
+import keyboard
+
+from Cell import Cell
+
+class Grid:
+
+    def __init__(self,size):
+        self.size=size
+        self.grid=self.drawgrid()
+   
+    def drawgrid(self):
+        grid=[]
+        for row in range(self.size):
+            grid.append(["@"]*self.size)
+        return grid
+    
+    def printgrid(self):
+        for row in self.grid:
+            print("  ".join(row))
+            
+
+    def movecell(self,cell:Cell,newpos:list):
+        if self.grid[newpos[0]][newpos[1]] == "@" or  self.grid[newpos[0]][newpos[1]] == "O":
+            self.grid[cell.pos[0]][cell.pos[1]] = "@"
+            self.grid[newpos[0]][newpos[1]] = cell.symbol
+            cell.pos[0] = newpos[0]
+            cell.pos[1] = newpos[1]
+        else: 
+            return
+        
+    def move_up(self, cell:Cell):
+        newpos = []
+        if  0 <= cell.pos[0] - 1 < self.size:
+            newpos = [cell.pos[0]-1, cell.pos[1]]
+            self.movecell(cell, newpos)
+        return newpos
+        # newpos = [self.cell.pos[0] - 1, self.cell.pos[1]]
+        # self.movecell(newpos)
+
+    def move_down(self, cell:Cell):
+        newpos = []
+        if  0 <= cell.pos[0] + 1 < self.size:
+            newpos = [cell.pos[0]+1, cell.pos[1]]
+            self.movecell(cell, newpos)
+        return newpos
+
+        # newpos = [self.cell.pos[0] + 1, self.cell.pos[1]]
+        # self.movecell(newpos)
+
+    def move_left(self):
+        newpos = [self.cell.pos[0], self.cell.pos[1] - 1]
+        self.movecell(newpos)
+
+    def move_right(self):
+        newpos = [self.cell.pos[0], self.cell.pos[1] + 1]
+        self.movecell(newpos)
+
+    def run(self, cell:Cell):
+        # r = True
+        # try:
+        while True:
+            # self.printgrid()  # Print the grid
+            if keyboard.is_pressed('w'):  # Move up
+                newpos = self.move_up(cell)
+                self.movepurpleaction(newpos)
+                break
+            elif keyboard.is_pressed('s'):  # Move left
+                newpos1 = self.move_down(cell)
+                self.movepurpleaction(newpos1)
+                break
+
+            # elif keyboard.is_pressed('d'):  # Move right
+            #     self.move_right()   
+        # except KeyboardInterrupt: print("Program interrupted and stopped.")
+
+
+    def get_possible_moves(self, cell: Cell):
+      possible_moves = []
+      size = self.size
+
+      for row in range(size):
+         for col in range(size):
+            if self.grid[row][col] in ["@", "O"]:
+                possible_moves.append([row, col])
+
+      return possible_moves
+
+
+    def win(self):
+        for row in range(self.size):
+            for col in range(self.size):
+                if self.grid[row][col] =="O":
+                    return False
+        return True
+    
+    def movepurpleaction(self, newposition: list):
+        
+        self.movepurpleaction_right(newposition)
+        self.movepurpleaction_left(newposition)
+        self.movepurpleaction_up(newposition)
+        self.movepurpleaction_down(newposition)
+
+    def movepurpleaction_right(self, newposition: list):
+        newrow = newposition[0]  # x
+        newcol = newposition[1]  # y
+        size = self.size
+
+        # Right
+        start = -1
+        end = -1
+        for r in range(newcol + 1, size):
+            if self.grid[newrow][r] in ["M", "+", "-"]:
+                start = r
+                break
+
+        for r in range(start + 1, size):
+            if self.grid[newrow][r] in ["@"]:
+                end = r
+                break
+
+        while start != -1 and end != -1 and end > start:
+            x = end - 1
+            sym = self.grid[newrow][x]
+            self.grid[newrow][x] = "@"
+            self.grid[newrow][end] = sym
+            end -= 1
+
+    def movepurpleaction_left(self, newposition: list):
+        newrow = newposition[0]
+        newcol = newposition[1]
+        size = self.size
+
+        # Left
+        start = -1
+        end = -1
+        for r in range(newcol - 1, -1, -1):
+            if self.grid[newrow][r] in ["M", "+", "-"]:
+                start = r
+                break
+
+        for r in range(start - 1, -1, -1):
+            if self.grid[newrow][r] in ["@"]:
+                end = r
+                break
+
+        while start != -1 and end != -1 and end < start:
+            x = end + 1
+            sym = self.grid[newrow][x]
+            self.grid[newrow][x] = "@"
+            self.grid[newrow][end] = sym
+            end += 1
+        
+    def movepurpleaction_up(self, newposition: list):
+        newrow = newposition[0]
+        newcol = newposition[1]
+        size = self.size
+
+        # Up
+        start = -1
+        end = -1
+        for r in range(newrow - 1, -1, -1):
+            if self.grid[r][newcol] in ["M", "+", "-"]:
+                start = r
+                break
+
+        for r in range(start - 1, -1, -1):
+            if self.grid[r][newcol] in ["@"]:
+                end = r
+                break
+
+        while start != -1 and end != -1 and end < start:
+            x = end + 1
+            sym = self.grid[x][newcol]
+            self.grid[x][newcol] = "@"
+            self.grid[end][newcol] = sym
+            end += 1
+
+    def movepurpleaction_down(self, newposition: list):
+        newrow = newposition[0]
+        newcol = newposition[1]
+        size = self.size
+
+        # Down
+        start = -1
+        end = -1
+        for r in range(newrow + 1, size):
+            if self.grid[r][newcol] in ["M", "+", "-"]:
+                start = r
+                break
+
+        for r in range(start + 1, size):
+            if self.grid[r][newcol] in ["@"]:
+                end = r
+                break
+
+        while start != -1 and end != -1 and end > start:
+            x = end - 1
+            sym = self.grid[x][newcol]
+            self.grid[x][newcol] = "@"
+            self.grid[end][newcol] = sym
+            end -= 1
+        
+    
+    # def movepurpleaction(self, newposition: list):
+    #     newrow = newposition[0]  # x
+    #     newcol = newposition[1]  # y
+    #     size = self.size
+
+    #     # right
+    #     start = -1
+    #     end = -1
+    #     for r in range(newcol + 1, size):
+    #         if self.grid[newrow][r] in ["M", "+", "-"]:
+    #             start = r
+    #             break
+    #     print(f"Start: {start}")
+
+    #     for r in range(start + 1, size):
+    #         if self.grid[newrow][r] in ["@"]:
+    #             end = r
+    #             break
+    #     print(f"End: {end}")
+
+    #     # Ensure both start and end are valid before proceeding
+    #     while start != -1 and end != -1 and end > start:
+    #         print(newrow, " ", end - 1)
+    #         x = end - 1
+    #         sym = self.grid[newrow][x]
+    #         self.grid[newrow][x] = "@"
+    #         self.grid[newrow][end] = sym
+    #         end -= 1
+ 
+        #         if r > newcol:
+        #             if r + 1 < size:
+        #                 self.grid[newrow][r] = "@"
+        #                 self.grid[newrow][r + 1] = sym
+        #                 break
+        #         else:
+        #             if r - 1 >= 0:
+        #                 self.grid[newrow][r] = "@"
+        #                 self.grid[newrow][r - 1] = sym
+        #             # break
+              
+        
+        # for c in range(size):
+        #     sym = self.grid[c][newcol]
+        #     if self.grid[c][newcol] in ["M", "+"]:
+        #         if c > newrow:
+        #             if c + 1 < size:
+        #                 self.grid[c][newcol] = "@"
+        #                 self.grid[c + 1][newcol] = sym
+        #                 break
+        #         else:
+        #             if c - 1 >= 0:
+        #                 self.grid[c][newcol] = "@"
+        #                 self.grid[c - 1][newcol] = sym
+        #                 # break
+
+    def moveredaction(self, newpos: list):
+        newrow = newpos[0]
+        newcol = newpos[1]
+        size = self.size
+
+        # Move horizontally (row-wise)
+        for r in range(size):
+            r_sym = self.grid[newrow][r]
+            if r_sym in ["M", "-"]:
+                if r > newcol:  # Move left
+                    if r - 1 >= 0 and self.grid[newrow][r - 1] in ["@", "O"]:
+                        print(f"Moving {r_sym} left from ({newrow}, {r}) to ({newrow}, {r - 1})")
+                        self.grid[newrow][r] = "@"
+                        self.grid[newrow][r - 1] = r_sym
+                        
+        for r in range(newcol,-1,-1):
+            r_sym = self.grid[newrow][r]
+            if r_sym in ["M", "-"]:                
+                if r < newcol:  # Move right
+                    if r + 1 < size and self.grid[newrow][r + 1] in ["@", "O"]:
+                        print(f"Moving {r_sym} right from ({newrow}, {r}) to ({newrow}, {r + 1})")
+                        self.grid[newrow][r] = "@"
+                        self.grid[newrow][r + 1] = r_sym
+                    
+
+        # Move vertically (column-wise)
+        for c in range(size):
+            c_sym = self.grid[c][newcol]
+            if c_sym in ["M", "-"]:
+                if c > newrow:  # Move up
+                    if c - 1 >= 0 and self.grid[c - 1][newcol] in ["@", "O"]:
+                        print(f"Moving {c_sym} up from ({c}, {newcol}) to ({c - 1}, {newcol})")
+                        self.grid[c][newcol] = "@"
+                        self.grid[c - 1][newcol] = c_sym
+        for c in range(newrow,-1,-1):
+            c_sym = self.grid[c][newcol]
+            if c_sym in ["M", "-"]:
+                if c < newrow:  # Move down
+                    if c + 1 < size and self.grid[c + 1][newcol] in ["@", "O"]:
+                        # print(f"Moving {c_sym} down from ({c}, {newcol}) to ({c + 1}, {newcol})")
+                        self.grid[c][newcol] = "@"
+                        self.grid[c + 1][newcol] = c_sym
+                
+
+ 
+
+
+    
+        
+        
+    
+
+    
+
+
+
+      
+
+                
+            
+
+         
+
+
+ 
+ # def movepurpleaction(self, newposition: list):
+    #     newrow = newposition[0]  # x
+    #     newcol = newposition[1]  # y
+    #     size = self.size
+
+    #     # right
+    #     start = -1
+    #     end = -1
+    #     for r in range(newcol + 1, size):
+    #         if self.grid[newrow][r] in ["M", "+", "-"]:
+    #             start = r
+    #             break
+    #     print(f"Start: {start}")
+
+    #     for r in range(start + 1, size):
+    #         if self.grid[newrow][r] in ["@"]:
+    #             end = r
+    #             break
+    #     print(f"End: {end}")
+
+    #     # Ensure both start and end are valid before proceeding
+    #     while start != -1 and end != -1 and end > start:
+    #         print(newrow, " ", end - 1)
+    #         x = end - 1
+    #         sym = self.grid[newrow][x]
+    #         self.grid[newrow][x] = "@"
+    #         self.grid[newrow][end] = sym
+    #         end -= 1
+ 
+        #         if r > newcol:
+        #             if r + 1 < size:
+        #                 self.grid[newrow][r] = "@"
+        #                 self.grid[newrow][r + 1] = sym
+        #                 break
+        #         else:
+        #             if r - 1 >= 0:
+        #                 self.grid[newrow][r] = "@"
+        #                 self.grid[newrow][r - 1] = sym
+        #             # break
+              
+        
+        # for c in range(size):
+        #     sym = self.grid[c][newcol]
+        #     if self.grid[c][newcol] in ["M", "+"]:
+        #         if c > newrow:
+        #             if c + 1 < size:
+        #                 self.grid[c][newcol] = "@"
+        #                 self.grid[c + 1][newcol] = sym
+        #                 break
+        #         else:
+        #             if c - 1 >= 0:
+        #                 self.grid[c][newcol] = "@"
+        #                 self.grid[c - 1][newcol] = sym
+        #                 # break
