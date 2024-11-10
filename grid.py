@@ -17,8 +17,22 @@ class Grid:
     def printgrid(self):
         for row in self.grid:
             print("  ".join(row))
-            
+        print()   
+    def find_purple_position(self):
+      for r in range(self.size):
+          for c in range(self.size):
+            if self.grid[r][c]=="-":
+                # return self.grid[r][c]
+                return Cell('purple', [r,c], self)
 
+    def find_red_position(self):
+      for r in range(self.size):
+          for c in range(self.size):
+             if self.grid[r][c] == "+":
+                return Cell('red',[r,c],self)
+
+          
+                    
     def movecell(self,cell:Cell,newposition:list):
         if self.grid[newposition[0]][newposition[1]] == "@" or  self.grid[newposition[0]][newposition[1]] == "O":
             self.grid[cell.pos[0]][cell.pos[1]] = "@"
@@ -26,7 +40,9 @@ class Grid:
             cell.pos[0] = newposition[0]
             cell.pos[1] = newposition[1]
         else: 
-            return
+            return 
+        # return self.printgrid()
+        return self
     # ///////////////////////////////////////MOVE BY KEYBOARD/////////////////////////////    
     def move_up(self, cell:Cell):
         newpos = []
@@ -69,16 +85,16 @@ class Grid:
         # except KeyboardInterrupt: print("Program interrupted and stopped.")
 
 
-  
+    
     # /////////////////////////////////////GET the POOSIBLE MOVES OF THE CELL/////////////////////////////////// 
     def getcellmoves(self,cell:Cell):
-     possiblemoves=[]
-     size=self.size
-     for r in range(size):
-        for c in range(size):
-            if self.grid[r][c] in ["@","O"]:
-                possiblemoves.append([r,c])
-     return possiblemoves            
+        possiblemoves=[]
+        size=self.size
+        for r in range(size):
+            for c in range(size):
+                if self.grid[r][c] in ["@","O"]:
+                   possiblemoves.append([r,c])
+        return possiblemoves            
     # ///////////////////////////////////////CHECK FOR WINNING///////////////////////////////////////////
     def win(self):
         for row in range(self.size):
@@ -86,6 +102,10 @@ class Grid:
                 if self.grid[row][col] =="O":
                     return False
         return True
+    def copy_grid(self): 
+      new_grid = Grid(self.size) 
+      new_grid.grid = [row[:] for row in self.grid]
+      return new_grid
 
     def movethepurpleaction(self, newposition: list):
         
@@ -233,10 +253,7 @@ class Grid:
                         break
     
         return sym
-              
-        
-        
-
+    
     def moveredaction(self, newposition: list):
         newrow = newposition[0]
         newcolumn = newposition[1]
@@ -275,26 +292,3 @@ class Grid:
                     if c + 1 < size and self.grid[c + 1][newcolumn] in ["@", "O"]:
                         self.grid[c][newcolumn] = "@"
                         self.grid[c + 1][newcolumn] = columnsym
-                
-
- 
-
-
-    
-        
-        
-    
-
-    
-
-
-
-      
-
-                
-            
-
-         
-
-
- 
