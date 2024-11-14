@@ -32,6 +32,7 @@ class States:
 
    def expand_purple_moves(self, cell: Cell):
       purple_positions = self.getallcellmoves(cell) 
+      children = []
       for purple_pos in purple_positions: 
          newboard = self.copy_grid()
          newpurple= newboard.find_purple_position() 
@@ -40,6 +41,9 @@ class States:
          # new_node = Node(newboard) 
          # self.tree.add_edge(self.tree.root, new_node) 
          self.root.root.add_child(newboard)
+         children.append(States(newboard))
+      return children
+
 
          
          
